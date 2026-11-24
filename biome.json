@@ -1,0 +1,4 @@
+{
+  "formatter": { "indentStyle": "space", "lineWidth": 140 },
+  "files": { "includes": ["src/**", "test/**", "scripts/**", "!src/parser.ts", "!src/parser.terms.ts"] }
+}

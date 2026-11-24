@@ -1,0 +1,112 @@
+// SPDX-FileCopyrightText: 2026 Reza Jelveh
+//
+// SPDX-License-Identifier: Apache-2.0
+
+// Lezer grammar for predictygraph (.pdg) diagrams.
+// Mirrors tree-sitter-pdg/grammar.js and docs/SPEC.md in the main repo.
+
+@top Diagram { sep* (statement (sep+ statement)* sep*)? }
+
+@skip { space | Comment }
+
+sep { newline | ";" }
+
+statement[@isGroup=Statement] {
+  GraphStatement |
+  CssImport |
+  CssBlock |
+  DefaultStatement |
+  Group |
+  LetStatement |
+  DefStatement |
+  UseStatement |
+  BracketStatement |
+  LegendStatement |
+  EdgeStatement |
+  NodeStatement
+}
+
+GraphStatement { kw<"graph"> modifier* }
+
+CssImport { kw<"css"> String }
+
+CssBlock { kw<"css"> CssContent }
+
+DefaultStatement { kw<"default"> (ckw<"node"> | ckw<"edge"> | ckw<"group">) modifier* }
+
+// bracket a, b "label"  /  legend .cls "label"  /  legend "Key"
+BracketStatement { ckw<"bracket"> NodeName ("," NodeName)* label? modifier* }
+
+LegendStatement { ckw<"legend"> (Class | label) label? modifier* }
+
+Group { ckw<"group"> Identifier label? modifier* Block }
+
+LetStatement { kw<"let"> VariableName "=" (String | Variable | Value) }
+
+DefStatement { kw<"def"> DefName Parameter* Block }
+
+Parameter { ParameterName ("=" attributeValue)? }
+
+UseStatement { kw<"use"> DefName Identifier label? modifier* }
+
+Block { "{" sep* (statement (sep+ statement)* sep*)? "}" }
+
+NodeStatement { NodeName label? modifier* }
+
+EdgeStatement { endpoints (Arrow endpoints)+ label? modifier* }
+
+endpoints { NodeName ("," NodeName)* }
+
+modifier { Class | Attribute }
+
+Attribute { AttributeName "=" attributeValue }
+
+attributeValue { String | Variable | Value }
+
+label { String | Variable }
+
+NodeName { identifier }
+DefName { identifier }
+VariableName { identifier }
+ParameterName { identifier }
+AttributeName { identifier }
+Identifier { identifier }
+
+kw<term> { @specialize[@name={term}]<identifier, term> }
+
+// contextual keywords: still usable as ids (`group node`, `a -> edge`)
+ckw<term> { @extend[@name={term}]<identifier, term> }
+
+// `css { ... }` body as one token with balanced braces; the language nests CSS in it.
+// Bare attribute values right after `=` (12px, #fff, right, logo.png, 0,0).
+@external tokens cssBody from "./tokens" { CssContent }
+@external tokens bareValue from "./tokens" { Value }
+
+@tokens {
+  space { $[ \t]+ }
+  newline { "\r"? "\n" }
+
+  identifier { $[A-Za-z_] $[A-Za-z0-9_\-]* }
+
+  Variable { "$" $[A-Za-z_] $[A-Za-z0-9_]* }
+
+  Class { "." "$"? $[A-Za-z_] $[A-Za-z0-9_\-]* }
+
+  String { '"' (!["\\\n] | "\\" _)* '"' }
+
+  // <?[-=.]+> | <[-=.]+ | [-=.]{2,}
+  Arrow {
+    "<"? $[\-=.]+ ">" |
+    "<" $[\-=.]+ |
+    $[\-=.] $[\-=.]+
+  }
+
+  // `#` followed by space, `#`, `!` or end of line; `#fff` is a value
+  Comment { "#" ($[ \t#!] ![\n]*)? }
+
+  "{" "}" "=" "," ";"
+
+  @precedence { Arrow, Class }
+}
+
+@detectDelim

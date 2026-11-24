@@ -1,0 +1,61 @@
+{
+  "name": "@predictygraph/lezer-pdg",
+  "version": "0.1.0",
+  "description": "Lezer grammar and CodeMirror 6 language support for predictygraph (.pdg) diagrams",
+  "keywords": [
+    "predictygraph",
+    "pdg",
+    "lezer",
+    "codemirror",
+    "codemirror6",
+    "syntax-highlighting",
+    "diagram",
+    "diagrams-as-code"
+  ],
+  "homepage": "https://github.com/predictygraph/lezer-pdg#readme",
+  "bugs": "https://github.com/predictygraph/lezer-pdg/issues",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/predictygraph/lezer-pdg.git"
+  },
+  "author": "Reza Jelveh <fishmangit@dynamia.ai>",
+  "license": "Apache-2.0",
+  "type": "module",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.mts",
+      "default": "./dist/index.mjs"
+    }
+  },
+  "module": "./dist/index.mjs",
+  "types": "./dist/index.d.mts",
+  "files": [
+    "dist",
+    "src/pdg.grammar"
+  ],
+  "sideEffects": false,
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "generate": "lezer-generator --typeScript src/pdg.grammar -o src/parser.ts && node scripts/fix-imports.mjs",
+    "build": "tsdown",
+    "test": "node --test test/*.test.ts",
+    "check": "biome check . && tsc --noEmit",
+    "prepublishOnly": "npm run build"
+  },
+  "dependencies": {
+    "@codemirror/lang-css": "^6.3.1",
+    "@codemirror/language": "^6.13.1",
+    "@lezer/common": "^1.5.6",
+    "@lezer/highlight": "^1.2.5",
+    "@lezer/lr": "^1.4.12"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "^2.6.6",
+    "@lezer/generator": "^1.8.1",
+    "@types/node": "^24.19.2",
+    "tsdown": "^0.23.7",
+    "typescript": "^5.9.3"
+  }
+}
