@@ -1,5 +1,5 @@
 {
-  "name": "@predictygraph/lezer-pdg",
+  "name": "lezer-pdg",
   "version": "0.1.0",
   "description": "Lezer grammar and CodeMirror 6 language support for predictygraph (.pdg) diagrams",
   "keywords": [

@@ -1,4 +1,4 @@
-# @predictygraph/lezer-pdg
+# lezer-pdg
 
 [Lezer](https://lezer.codemirror.net/) grammar and [CodeMirror 6](https://codemirror.net/) language support for
 [predictygraph](https://github.com/predictygraph/predictygraph) (`.pdg`) diagrams.
@@ -12,19 +12,19 @@ Mirrors [tree-sitter-pdg](https://github.com/predictygraph/tree-sitter-pdg) and 
 ## Use
 
 ```sh
-npm install @predictygraph/lezer-pdg
+npm install lezer-pdg
 ```
 
 ```js
 import { EditorView, basicSetup } from "codemirror";
-import { pdg } from "@predictygraph/lezer-pdg";
+import { pdg } from "lezer-pdg";
 
 new EditorView({ doc: 'a -> b "hello"\n', extensions: [basicSetup, pdg()], parent: document.body });
 ```
 
 `parser` (the configured Lezer parser) and `pdgLanguage` are exported too, e.g. for
 [@lezer/markdown](https://github.com/lezer-parser/markdown) code block nesting or
-[@decktile/lezer-decktile](https://github.com/decktile/lezer-decktile).
+[lezer-decktile](https://github.com/decktile/lezer-decktile).
 
 ## Develop
 
